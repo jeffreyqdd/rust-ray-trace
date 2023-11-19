@@ -1,7 +1,5 @@
 use crate::camera::Camera;
-use crate::common::{IntersectResult, Ray};
-use crate::geometry::{Plane, Surface};
-use approx::{abs_diff_eq, relative_eq, AbsDiffEq, RelativeEq};
+use crate::common::Ray;
 use nalgebra::{Matrix4, Point3, Transform3, Unit, UnitVector3, Vector3};
 
 #[derive(Debug, PartialEq)]
