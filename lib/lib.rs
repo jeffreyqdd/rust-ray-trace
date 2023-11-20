@@ -2,6 +2,7 @@ pub mod camera;
 pub mod color;
 pub mod common;
 pub mod geometry;
+pub mod illumination;
 
 // fn main() {
 // let m = Matrix3::new(1., 0., 0., 0., 2., 0., 0., 0., 3.0);
