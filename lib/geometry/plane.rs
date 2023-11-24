@@ -33,14 +33,10 @@ impl Surface for Plane {
                 .normal
                 .component_mul(&Vector3::repeat(f64::signum(denom)));
 
-            return if t > ray.start - TRACE_EPSILON {
-                IntersectResult::Hit {
-                    t,
-                    point: ray.at(t),
-                    normal: UnitVector3::new_unchecked(norm),
-                }
-            } else {
-                IntersectResult::Miss
+            return IntersectResult::Hit {
+                t,
+                point: ray.at(t),
+                normal: UnitVector3::new_unchecked(-norm),
             };
         }
         IntersectResult::Miss

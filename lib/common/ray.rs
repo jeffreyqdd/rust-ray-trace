@@ -5,18 +5,11 @@ use nalgebra::{Point3, Vector3};
 pub struct Ray {
     pub origin: Point3<f64>,
     pub direction: Vector3<f64>,
-    pub start: f64,
-    pub end: f64,
 }
 
 impl Ray {
     pub fn new(origin: Point3<f64>, direction: Vector3<f64>) -> Ray {
-        Ray {
-            origin,
-            direction,
-            start: 0.0,
-            end: f64::INFINITY,
-        }
+        Ray { origin, direction }
     }
 
     pub fn at(&self, t: f64) -> Point3<f64> {
@@ -34,8 +27,6 @@ impl AbsDiffEq for Ray {
     fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
         abs_diff_eq!(self.origin, other.origin, epsilon = epsilon)
             && abs_diff_eq!(self.direction, other.direction, epsilon = epsilon)
-            && abs_diff_eq!(self.start, other.start, epsilon = epsilon)
-            && abs_diff_eq!(self.end, other.end, epsilon = epsilon)
     }
 }
 impl RelativeEq for Ray {
@@ -57,16 +48,6 @@ impl RelativeEq for Ray {
         ) && relative_eq!(
             self.direction,
             other.direction,
-            epsilon = epsilon,
-            max_relative = max_relative
-        ) && relative_eq!(
-            self.start,
-            other.start,
-            epsilon = epsilon,
-            max_relative = max_relative
-        ) && relative_eq!(
-            self.end,
-            other.end,
             epsilon = epsilon,
             max_relative = max_relative
         )
