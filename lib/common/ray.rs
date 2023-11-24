@@ -1,3 +1,4 @@
+use crate::TRACE_EPSILON;
 use approx::{abs_diff_eq, relative_eq, AbsDiffEq, RelativeEq};
 use nalgebra::{Point3, Vector3};
 
@@ -21,7 +22,7 @@ impl AbsDiffEq for Ray {
     type Epsilon = f64;
 
     fn default_epsilon() -> Self::Epsilon {
-        1e-14
+        TRACE_EPSILON
     }
 
     fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
