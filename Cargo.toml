@@ -9,6 +9,10 @@ edition = "2021"
 name = "ray_tracer"
 path = "lib/lib.rs"
 
+[[bin]]
+name = "rust_trace"
+path = "bin/main.rs"
+
 [dependencies]
 nalgebra = "*"
 approx = "0.5.1"
