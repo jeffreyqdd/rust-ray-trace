@@ -1,5 +1,6 @@
 use crate::common::{IntersectResult, Ray};
 use crate::geometry::traits::Surface;
+use crate::TRACE_EPSILON;
 use approx::{abs_diff_eq, relative_eq, AbsDiffEq, RelativeEq};
 use nalgebra::{vector, Point3, Unit, UnitVector3, Vector3, Vector4};
 
@@ -25,19 +26,24 @@ impl Plane {
 impl Surface for Plane {
     fn intersect(&self, ray: &Ray) -> IntersectResult {
         let denom = self.equation.dot(&ray.direction.to_homogeneous());
-        let sign = f64::signum(denom);
 
-        if f64::abs(denom) >= 1e-8 {
+        if f64::abs(denom) >= 1e-14 {
             let t = -self.equation.dot(&ray.origin.to_homogeneous()) / denom;
-            let norm = self.normal.component_mul(&vector![-sign, -sign, -sign]);
-            IntersectResult::Hit {
-                t: t,
-                point: ray.at(t),
-                normal: UnitVector3::new_unchecked(norm),
-            }
-        } else {
-            IntersectResult::Miss
+            let norm = self
+                .normal
+                .component_mul(&Vector3::repeat(f64::signum(denom)));
+
+            return if t > ray.start - TRACE_EPSILON {
+                IntersectResult::Hit {
+                    t,
+                    point: ray.at(t),
+                    normal: UnitVector3::new_unchecked(norm),
+                }
+            } else {
+                IntersectResult::Miss
+            };
         }
+        IntersectResult::Miss
     }
 }
 
@@ -45,7 +51,7 @@ impl AbsDiffEq for Plane {
     type Epsilon = f64;
 
     fn default_epsilon() -> Self::Epsilon {
-        1e-14
+        TRACE_EPSILON
     }
 
     fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {

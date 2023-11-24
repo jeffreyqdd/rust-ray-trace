@@ -3,6 +3,8 @@ pub mod color;
 pub mod common;
 pub mod geometry;
 
+pub const TRACE_EPSILON: f64 = 1e-14;
+
 // fn main() {
 // let m = Matrix3::new(1., 0., 0., 0., 2., 0., 0., 0., 3.0);
 // let v = Vector3::new(1., 2., 3.);
