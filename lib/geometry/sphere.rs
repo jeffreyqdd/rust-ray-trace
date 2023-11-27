@@ -39,7 +39,8 @@ impl Surface for Sphere {
             return IntersectResult::Miss;
         };
 
-        let normal = UnitVector3::new_normalize(point - self.center);
-        IntersectResult::Hit { t, point, normal }
+        let outwards_normal = UnitVector3::new_normalize(point - self.center);
+
+        IntersectResult::new_hit(t, point, outwards_normal, &ray.direction)
     }
 }

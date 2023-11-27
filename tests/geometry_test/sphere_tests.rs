@@ -39,7 +39,7 @@ fn sphere_test_unit_simple() {
         IntersectResult::Hit {
             t: 1.,
             point: point![-1., 0., 0.],
-            normal: UnitVector3::new_normalize(vector![-1., 0., 0.])
+            normal: UnitVector3::new_normalize(vector![1., 0., 0.])
         }
     );
 }
