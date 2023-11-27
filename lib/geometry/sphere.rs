@@ -1,5 +1,4 @@
-use crate::common::IntersectResult;
-use crate::common::Ray;
+use crate::common::{IntersectResult, Ray};
 use crate::geometry::Surface;
 use nalgebra::{Point3, UnitVector3};
 
@@ -31,7 +30,6 @@ impl Surface for Sphere {
         let d_sqrt = discriminant.sqrt();
         let solution_minus = (-b - d_sqrt) / a;
         let solution_plus = (-b + d_sqrt) / a;
-        println!("solutions = {} {}", solution_plus, solution_minus);
 
         let (t, point) = if solution_minus >= 0. {
             (solution_minus, ray.at(solution_minus))
