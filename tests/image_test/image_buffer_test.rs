@@ -47,8 +47,6 @@ fn red_green_gradient() {
             frame.write_color(r, c, Color::new_rgb(red_gain, green_gain, blue_gain));
         }
     }
-    println!("hello world");
-    println!("{:#?}", frame.as_slice());
     let file = File::create(Path::new(r"tests/image_test/red_green_gradient.png")).unwrap();
     frame.write_image(file, ImageType::Rgb8bit, None, None);
 }
