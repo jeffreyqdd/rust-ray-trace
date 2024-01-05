@@ -16,3 +16,4 @@ path = "bin/main.rs"
 [dependencies]
 nalgebra = "*"
 approx = "0.5.1"
+png = "0.17.10"
