@@ -1,8 +1,8 @@
 pub mod camera;
-pub mod color;
 pub mod common;
 pub mod geometry;
 pub mod illumination;
+pub mod image;
 
 pub const TRACE_EPSILON: f64 = 1e-14;
 
