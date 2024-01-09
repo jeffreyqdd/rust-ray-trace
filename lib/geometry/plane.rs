@@ -1,4 +1,4 @@
-use crate::common::{IntersectResult, Ray};
+use crate::common::{IntersectResult, Ray, Material};
 use crate::geometry::traits::Surface;
 use crate::TRACE_EPSILON;
 use approx::{abs_diff_eq, relative_eq, AbsDiffEq, RelativeEq};
@@ -8,10 +8,11 @@ use nalgebra::{vector, Point3, Unit, UnitVector3, Vector3, Vector4};
 pub struct Plane {
     normal: Unit<Vector3<f64>>,
     equation: Vector4<f64>,
+    material : Material
 }
 
 impl Plane {
-    pub fn new(point: Point3<f64>, normal: Unit<Vector3<f64>>) -> Plane {
+    pub fn new(point: Point3<f64>, normal: Unit<Vector3<f64>>, material : Material) -> Plane {
         let equation: Vector4<f64> = Vector4::new(
             normal.x,
             normal.y,
@@ -19,7 +20,7 @@ impl Plane {
             -normal.dot(&vector![point.x, point.y, point.z]),
         );
 
-        Plane { normal, equation }
+        Plane { normal, equation, material }
     }
 }
 
@@ -37,6 +38,7 @@ impl Surface for Plane {
                 t,
                 point: ray.at(t),
                 normal: UnitVector3::new_unchecked(-norm),
+                material: self.material.clone()
             };
         }
         IntersectResult::Miss
