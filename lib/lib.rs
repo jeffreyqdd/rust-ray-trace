@@ -6,45 +6,67 @@ pub mod image;
 
 pub const TRACE_EPSILON: f64 = 1e-14;
 
-// fn main() {
-// let m = Matrix3::new(1., 0., 0., 0., 2., 0., 0., 0., 3.0);
-// let v = Vector3::new(1., 2., 3.);
+use image::{Color, Frame};
+use camera::Camera;
+use common::{Ray, IntersectResult, Scene};
+// use illumination::Illuminate;
 
-// println!("{}", m);
-// println!("{}", v);
-// println!("{}", m * v);
-// let c = color::Color::new(0.2, 0.4, 0.23);
-// println!("{}", c);
 
-// let image_width = 256;
-// let image_height = 256;
+fn shade(ray : Ray, scene : &Scene, depth : u32) -> Color {
+    if depth == 0 {
+        return Color::new_rgb(0., 0., 0.);
+    }
 
-// println!("P3\n{} {}\n255", image_width, image_height);
+    match scene.intersect(&ray) {
+        IntersectResult::Hit { t: _, point, normal, material: _ } => {
+            // should always be a hit
+            let new_direction = nalgebra::Vector3::new_random().normalize() + normal.into_inner();
+            return shade(Ray::new(point + new_direction * 1e-8, new_direction), scene, depth - 1) * 0.5;
+        },
+        IntersectResult::Miss => {
+            let unit_direction = ray.direction.normalize();
+            let a = 0.5 * (unit_direction.y + 1.0);
+            return (Color::new_rgb(1., 1., 1.) * (1. - a)) + (Color::new_rgb(0.5, 0.7, 1.) * a);
+        }
+    };
+}
 
-// for r in 0..image_height {
-//     for c in 0..image_width {
-//         let r_gain = r as f64 / image_height as f64;
-//         let g_gain = c as f64 / image_width as f64;
-//         let b_gain = 0.0;
+pub fn render_frame(camera : Box<dyn Camera>, scene : Scene, width_px : usize, height_px : usize) -> Frame {
+    let mut frame_buffer = Frame::new(width_px, height_px, 3);
 
-//         let pr = (255.0 * r_gain) as u8;
-//         let pb = (255.0 * g_gain) as u8;
-//         let pg = (255.0 * b_gain) as u8;
-//         println!("{pr} {pb} {pg}");
-//     }
-// }
+    for w in 0..width_px {
+        for h in 0..height_px {
+            let x1 : f64 = (w as f64 + 0.25) / (width_px as f64);
+            let y1 : f64 = (h as f64 + 0.25) / (height_px as f64);
 
-// for (int j = 0; j < image_height; ++j) {
-//     for (int i = 0; i < image_width; ++i) {
-//         auto r = double(i) / (image_width-1);
-//         auto g = double(j) / (image_height-1);
-//         auto b = 0;
+            let x2 : f64 = (w as f64 + 0.75) / (width_px as f64);
+            let y2 : f64 = (h as f64 + 0.25) / (height_px as f64);
 
-//         int ir = static_cast<int>(255.999 * r);
-//         int ig = static_cast<int>(255.999 * g);
-//         int ib = static_cast<int>(255.999 * b);
+            let x3 : f64 = (w as f64 + 0.75) / (width_px as f64);
+            let y3 : f64 = (h as f64 + 0.75) / (height_px as f64);
 
-//         std::cout << ir << ' ' << ig << ' ' << ib << '\n';
-//     }
-// }
-// }
+            let x4 : f64 = (w as f64 + 0.25) / (width_px as f64);
+            let y4 : f64 = (h as f64 + 0.75) / (height_px as f64);
+
+            let mut color1 = shade(camera.generate_ray(x1, y1), &scene, 20);
+            let mut color2 = shade(camera.generate_ray(x2, y2), &scene, 20);
+            let mut color3 = shade(camera.generate_ray(x3, y3), &scene, 20);
+            let mut color4 = shade(camera.generate_ray(x4, y4), &scene, 20);
+
+            color1.clamp();
+            color2.clamp();
+            color3.clamp();
+            color4.clamp();
+
+            let result = (color1 + color2 + color3 + color4) / 4.;
+            println!("{}", result);
+            frame_buffer.write_color(w, h, result);
+            // match scene.intersect(&ray) {
+            //     common::IntersectResult::Hit { .. } => frame_buffer.write_color(w, h, image::Color::new_rgb(1., 1., 1.)),
+            //     common::IntersectResult::Miss => frame_buffer.write_color(w, h, image::Color::new_rgb(0., 0., 0.)),
+            // };
+        }
+    }
+
+    frame_buffer
+}
