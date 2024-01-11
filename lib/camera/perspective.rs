@@ -49,7 +49,7 @@ impl PerspectiveCamera {
         let x_vec: Unit<Vector3<f64>> = UnitVector3::new_normalize(up.cross(&z_vec));
 
         // up
-        let y_vec: Unit<Vector3<f64>> = UnitVector3::new_normalize(z_vec.cross(&x_vec));
+        let y_vec: Vector3<f64> = z_vec.cross(&x_vec);
 
         let mut m = Matrix4::identity();
 
