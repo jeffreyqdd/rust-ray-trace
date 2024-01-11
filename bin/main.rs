@@ -28,7 +28,7 @@ fn main() {
     let img = ray_tracer::render_frame(Box::new(camera), scene, 256, 144);
 
     // export image
-    let path = Path::new(r"bw_render_simple.png");
+    let path = Path::new(r"stretched_norm.png");
     let file = File::create(path).unwrap();
     img.write_image(file, image::ImageType::Rgb16bit, None, None);
 }
