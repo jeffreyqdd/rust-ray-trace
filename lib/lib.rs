@@ -1,49 +1,95 @@
 pub mod camera;
 pub mod common;
 pub mod geometry;
+pub mod illumination;
 pub mod image;
 
 pub const TRACE_EPSILON: f64 = 1e-14;
 
-// fn main() {
-// let m = Matrix3::new(1., 0., 0., 0., 2., 0., 0., 0., 3.0);
-// let v = Vector3::new(1., 2., 3.);
+use camera::Camera;
+use common::{IntersectResult, Ray, Scene};
+use illumination::Illuminate;
+use image::{Color, Frame};
+// use illumination::Illuminate;
 
-// println!("{}", m);
-// println!("{}", v);
-// println!("{}", m * v);
-// let c = color::Color::new(0.2, 0.4, 0.23);
-// println!("{}", c);
+fn shade(ray: Ray, lights: &Vec<Box<dyn Illuminate>>, scene: &Scene, depth: u32) -> Color {
+    // let (color, hit) = scene.shade(&ray);
+    // shoot ray into scene and get intersection
+    // color the hit/miss according to illumination of the material
+    // bounce rays according to the material properties
+    let hit_result = scene.intersect(&ray);
+    let mut reflected_light: Color = Color::black_rgb();
 
-// let image_width = 256;
-// let image_height = 256;
+    // if depth limit has not been reached, we shoot the reflected light off into the scene
+    // if we're able to, we want to reflect the ray and shoot it off into the scene again.
+    if depth > 0 {}
+    // illuminate current pixel from current hit
+    match hit_result {
+        IntersectResult::Hit {
+            t: _,
+            point,
+            normal,
+            material,
+        } => {
+            for light in lights {
+                reflected_light += light.illuminate(&ray, &point, &normal, &material);
+            }
+            reflected_light.clamp();
+            reflected_light
+        }
+        IntersectResult::Miss => reflected_light,
+    }
+}
 
-// println!("P3\n{} {}\n255", image_width, image_height);
-
-// for r in 0..image_height {
-//     for c in 0..image_width {
-//         let r_gain = r as f64 / image_height as f64;
-//         let g_gain = c as f64 / image_width as f64;
-//         let b_gain = 0.0;
-
-//         let pr = (255.0 * r_gain) as u8;
-//         let pb = (255.0 * g_gain) as u8;
-//         let pg = (255.0 * b_gain) as u8;
-//         println!("{pr} {pb} {pg}");
+// pub fn shade(&self, ray: &Ray) -> (Color, IntersectResult) {
+//     let hit = self.intersect(ray);
+//     let mut result = Color::new_rgb(0., 0., 0.);
+//     for light in &self.lights {
+//         result += light.illuminate(ray, &hit);
 //     }
+//     (result, hit)
 // }
+pub fn render_frame(
+    camera: Box<dyn Camera>,
+    lights: Vec<Box<dyn Illuminate>>,
+    scene: Scene,
+    width_px: usize,
+    height_px: usize,
+) -> Frame {
+    let mut frame_buffer = Frame::new(width_px, height_px, 3);
 
-// for (int j = 0; j < image_height; ++j) {
-//     for (int i = 0; i < image_width; ++i) {
-//         auto r = double(i) / (image_width-1);
-//         auto g = double(j) / (image_height-1);
-//         auto b = 0;
+    for w in 0..width_px {
+        for h in 0..height_px {
+            let x1: f64 = (w as f64 + 0.25) / (width_px as f64);
+            let y1: f64 = (h as f64 + 0.25) / (height_px as f64);
 
-//         int ir = static_cast<int>(255.999 * r);
-//         int ig = static_cast<int>(255.999 * g);
-//         int ib = static_cast<int>(255.999 * b);
+            let x2: f64 = (w as f64 + 0.75) / (width_px as f64);
+            let y2: f64 = (h as f64 + 0.25) / (height_px as f64);
 
-//         std::cout << ir << ' ' << ig << ' ' << ib << '\n';
-//     }
-// }
-// }
+            let x3: f64 = (w as f64 + 0.75) / (width_px as f64);
+            let y3: f64 = (h as f64 + 0.75) / (height_px as f64);
+
+            let x4: f64 = (w as f64 + 0.25) / (width_px as f64);
+            let y4: f64 = (h as f64 + 0.75) / (height_px as f64);
+
+            let mut color1 = shade(camera.generate_ray(x1, y1), &lights, &scene, 20);
+            let mut color2 = shade(camera.generate_ray(x2, y2), &lights, &scene, 20);
+            let mut color3 = shade(camera.generate_ray(x3, y3), &lights, &scene, 20);
+            let mut color4 = shade(camera.generate_ray(x4, y4), &lights, &scene, 20);
+
+            color1.clamp();
+            color2.clamp();
+            color3.clamp();
+            color4.clamp();
+
+            let result = (color1 + color2 + color3 + color4) / 4.;
+            frame_buffer.write_color(w, h, result);
+            // match scene.intersect(&ray) {
+            //     common::IntersectResult::Hit { .. } => frame_buffer.write_color(w, h, image::Color::new_rgb(1., 1., 1.)),
+            //     common::IntersectResult::Miss => frame_buffer.write_color(w, h, image::Color::new_rgb(0., 0., 0.)),
+            // };
+        }
+    }
+
+    frame_buffer
+}

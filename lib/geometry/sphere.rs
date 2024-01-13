@@ -1,15 +1,16 @@
-use crate::common::{IntersectResult, Ray};
+use crate::common::{IntersectResult, Ray, Material};
 use crate::geometry::Surface;
 use nalgebra::{Point3, UnitVector3};
 
 pub struct Sphere {
     center: Point3<f64>,
     radius: f64,
+    material : Material,
 }
 
 impl Sphere {
-    pub fn new(center: Point3<f64>, radius: f64) -> Sphere {
-        Sphere { center, radius }
+    pub fn new(center: Point3<f64>, radius: f64, material: Material) -> Sphere {
+        Sphere { center, radius, material}
     }
 }
 
@@ -41,6 +42,6 @@ impl Surface for Sphere {
 
         let outwards_normal = UnitVector3::new_normalize(point - self.center);
 
-        IntersectResult::new_hit(t, point, outwards_normal, &ray.direction)
+        IntersectResult::new_hit(t, point, self.material.clone(), outwards_normal, &ray.direction)
     }
 }

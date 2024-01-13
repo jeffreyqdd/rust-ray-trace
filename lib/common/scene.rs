@@ -1,6 +1,7 @@
 use crate::common::{IntersectResult, Ray};
 use crate::geometry::Surface;
 use std::vec::Vec;
+
 pub struct Scene {
     objects: Vec<Box<dyn Surface>>,
 }

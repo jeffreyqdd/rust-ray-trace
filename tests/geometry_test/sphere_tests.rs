@@ -6,7 +6,7 @@ use nalgebra::{point, vector, UnitVector3};
 
 #[test]
 fn sphere_test_unit_simple() {
-    let sphere = Sphere::new(point![0., 0., 0.], 1.);
+    let sphere = Sphere::new(point![0., 0., 0.], 1., Material::none());
     let ray = Ray::new(point![0., -2., 0.], vector![0., 1., 0.,]);
 
     // dead center hit
@@ -15,7 +15,8 @@ fn sphere_test_unit_simple() {
         IntersectResult::Hit {
             t: 1.,
             point: point![0., -1., 0.],
-            normal: UnitVector3::new_normalize(vector![0., -1., 0.,])
+            normal: UnitVector3::new_normalize(vector![0., -1., 0.,]),
+            material: Material::none()
         }
     );
 
@@ -28,7 +29,8 @@ fn sphere_test_unit_simple() {
         IntersectResult::Hit {
             t: expected_t,
             point: hit_point,
-            normal: UnitVector3::new_normalize(hit_point - point![0., 0., 0.])
+            normal: UnitVector3::new_normalize(hit_point - point![0., 0., 0.]),
+            material: Material::none()
         }
     );
 
@@ -39,14 +41,15 @@ fn sphere_test_unit_simple() {
         IntersectResult::Hit {
             t: 1.,
             point: point![-1., 0., 0.],
-            normal: UnitVector3::new_normalize(vector![1., 0., 0.])
+            normal: UnitVector3::new_normalize(vector![1., 0., 0.]),
+            material: Material::none(),
         }
     );
 }
 
 #[test]
 fn sphere_test_unit_misses() {
-    let sphere = Sphere::new(point![0., 0., 0.], 1.);
+    let sphere = Sphere::new(point![0., 0., 0.], 1., Material::none());
 
     // on axis miss
     let ray = Ray::new(point![2., 3., 0.], vector![-1., 0., 0.]);

@@ -1,4 +1,3 @@
-use core::num;
 use std::{fs::File, io::BufWriter};
 
 use png::{BitDepth, ColorType, Encoder, ScaledFloat, SourceChromaticities};
@@ -24,7 +23,7 @@ pub struct Frame {
 
 impl Frame {
     /// creates instance of frame dims [width]x[height]x[depth]
-    /// typically, depth=1 is for grayscale, depth=3 is for RGB and depth=4 is for RGBA. 
+    /// typically, depth=1 is for grayscale, depth=3 is for RGB and depth=4 is for RGBA.
     pub fn new(width: usize, height: usize, depth: usize) -> Frame {
         Frame {
             width,
@@ -33,7 +32,6 @@ impl Frame {
             bytes: vec![0_f64; width * height * depth],
         }
     }
-
 
     /// write a value to a specific [width], [height], and [depth]
     /// [data] must be in the range [0., 1.]
@@ -95,7 +93,7 @@ impl Frame {
                             acc.push(((scaled_float & 0xFF00) >> 8) as u8);
                             acc.push((scaled_float & 0x00FF) as u8);
                             acc
-                        })
+                        }),
                     )
                 }
                 ImageType::Rgba8bit => {
@@ -109,7 +107,7 @@ impl Frame {
                             let scaled_float = (item * u8::MAX as f64) as u8;
                             acc.push(scaled_float);
                             acc
-                        })
+                        }),
                     )
                 }
                 ImageType::Rgb8bit => {
