@@ -17,9 +17,10 @@ Simple, parallized ray tracer written in rust.
 - [ ] Constructive Solid Geometries
 
 ### Illumination
-- [ ] Point light
-- [ ] Diffuse Materials
-- [ ] Lambertian Reflecting
+- [x] Ambient light
+- [x] Point light
+- [x] Diffuse Materials
+- [x] Lambertian Reflecting
 - [ ] Light Scatter and Reflectance
 - [ ] Dialectrics
 
@@ -36,9 +37,7 @@ Simple, parallized ray tracer written in rust.
 - [ ] Blender multi-object scene import
 
 ### Anti Aliasing
-- [ ] nearest neighbor 
-- [ ] bilinear
-- [ ] bicubic
+- [x] multiple samples per pixel
 
 ### Performance
 - [ ] Scale to N cores
