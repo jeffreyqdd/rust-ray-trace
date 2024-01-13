@@ -1,6 +1,6 @@
 use nalgebra::{Point3, UnitVector3};
 
-use crate::common::{IntersectResult, Material, Ray};
+use crate::common::{Material, Ray};
 use crate::image::Color;
 
 pub trait Illuminate {

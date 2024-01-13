@@ -52,7 +52,6 @@ impl AddAssign<Color> for Color {
     fn add_assign(&mut self, rhs: Color) {
         match (self.fmt, rhs.fmt) {
             (ColorType::RGB, ColorType::RGB) => self.data += rhs.data,
-            (_, _) => panic!(),
         };
     }
 }
@@ -65,7 +64,6 @@ impl Add<Color> for Color {
                 fmt: self.fmt,
                 data: self.data + rhs.data,
             },
-            (_, _) => panic!(),
         }
     }
 }

@@ -1,7 +1,5 @@
 use crate::common::{IntersectResult, Ray};
 use crate::geometry::Surface;
-use crate::illumination::Illuminate;
-use crate::image::Color;
 use std::vec::Vec;
 
 pub struct Scene {

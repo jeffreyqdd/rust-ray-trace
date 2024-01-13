@@ -1,8 +1,6 @@
-use std::ops::Mul;
-
-use crate::common::{IntersectResult, Material, Ray};
+use crate::common::{Material, Ray};
 use crate::image::Color;
-use nalgebra::{clamp, distance_squared, Point3, UnitVector3};
+use nalgebra::{distance_squared, Point3, UnitVector3};
 
 use super::traits::Illuminate;
 
