@@ -57,16 +57,4 @@ impl Material {
             illum: IllumModel::Constant,
         }
     }
-
-    pub fn red_matte() -> Material {
-        Material {
-            k_a: Color::new_rgb(1., 0., 0.),
-            k_d: Color::new_rgb(1., 0., 0.),
-            k_s: Color::new_rgb(1., 0., 0.),
-            ns: 0.,
-            ni: 1.,
-            d: 1.,
-            illum: IllumModel::Constant,
-        }
-    }
 }
