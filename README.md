@@ -19,8 +19,8 @@ Simple, parallized ray tracer written in rust.
 ### Illumination
 - [x] Ambient light
 - [x] Point light
-- [x] Diffuse Materials
-- [x] Lambertian Reflecting
+- [x] Lambertian Diffuse
+- [x] Blinn-Phong Specular
 - [ ] Light Scatter and Reflectance
 - [ ] Dialectrics
 
@@ -31,7 +31,7 @@ Simple, parallized ray tracer written in rust.
 ### Png Export
 - [x] RGB
 - [x] Grayscale
-- [ ] Gamma correction
+- [x] Gamma correction
 
 ### Scenes
 - [ ] Blender multi-object scene import

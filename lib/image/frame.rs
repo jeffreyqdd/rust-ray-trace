@@ -1,6 +1,6 @@
 use std::{fs::File, io::BufWriter};
 
-use png::{BitDepth, ColorType, Encoder, ScaledFloat, SourceChromaticities};
+use png::{BitDepth, ColorType, Encoder};
 
 use super::color::Color;
 
@@ -52,13 +52,7 @@ impl Frame {
         self.bytes.as_slice()
     }
 
-    pub fn write_image(
-        &self,
-        file: File,
-        image_type: ImageType,
-        source_gamma: Option<ScaledFloat>,
-        source_chromaticities: Option<SourceChromaticities>,
-    ) {
+    pub fn write_image(&self, file: File, image_type: ImageType, color_correct: bool) {
         let ref mut w = BufWriter::new(file);
         let mut encoder = Encoder::new(w, self.width as u32, self.height as u32);
         let (color_type, bit_depth) = match image_type {
@@ -69,15 +63,6 @@ impl Frame {
         };
         encoder.set_color(color_type);
         encoder.set_depth(bit_depth);
-
-        // set values if provided
-        if let Some(v) = source_gamma {
-            encoder.set_source_gamma(v);
-        }
-
-        if let Some(v) = source_chromaticities {
-            encoder.set_source_chromaticities(v);
-        }
 
         let (num_bytes, float_to_bytes_closure): (usize, Box<dyn FnMut(Vec<u8>, &f64) -> Vec<u8>>) =
             match image_type {
@@ -138,7 +123,14 @@ impl Frame {
                     )
                 }
             };
-        let byte_arr = self.bytes.iter().fold(
+
+        let new_bytes: Vec<f64> = if color_correct {
+            self.bytes.iter().map(|x| f64::sqrt(*x)).collect()
+        } else {
+            self.bytes.iter().map(|x| *x).collect()
+        };
+
+        let byte_arr = new_bytes.iter().fold(
             // two bytes required to represent a u16
             // scale the float to a range between 0 and u16::MAX and then use a bitmask
             Vec::<u8>::with_capacity(num_bytes),
