@@ -1,6 +1,16 @@
 # Ray Tracer
 Simple, parallized ray tracer written in rust.
 
+## Example Renders
+Without Gamma Correction
+
+![lambertian_bp](output/lambertian_blinn_phong.png)
+
+
+With Gamma Correction
+
+![lambertian_bp_cc](output/lambertian_blinn_phong_cc.png)
+
 ## Task List 
 ### Cameras
 - [x] Positionable Camera
