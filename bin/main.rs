@@ -82,8 +82,7 @@ fn main() {
     );
 
     // export image
-    let path = Path::new(r"stretched_norm.png");
+    let path = Path::new(r"output/lambertian_blinn_phong_cc.png");
     let file = File::create(path).unwrap();
-    let scaled_float = ScaledFloat::from_scaled(90000);
-    img.write_image(file, image::ImageType::Rgb16bit, Some(scaled_float), None);
+    img.write_image(file, image::ImageType::Rgb16bit, true);
 }

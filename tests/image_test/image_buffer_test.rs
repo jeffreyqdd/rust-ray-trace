@@ -1,36 +1,36 @@
 use image::*;
 use ray_tracer::image;
-use std::path::Path;
 use std::fs::File;
+use std::path::Path;
 
 // Unfortunately, these tests will have to be visually inspected
 // I don't want to write an image decoder only for the sake of testing
 
 #[test]
 fn generate_1_pixel_image_red() {
-    let mut frame = Frame::new(1,1,3);
+    let mut frame = Frame::new(1, 1, 3);
     frame.write_color(0, 0, Color::new_rgb(1., 0., 0.));
 
     let file = File::create(Path::new(r"tests/image_test/single_red_pixel.png")).unwrap();
-    frame.write_image(file, ImageType::Rgb8bit, None, None);
+    frame.write_image(file, ImageType::Rgb8bit, false);
 }
 
 #[test]
 fn generate_1_pixel_image_green() {
-    let mut frame = Frame::new(1,1,3);
+    let mut frame = Frame::new(1, 1, 3);
     frame.write_color(0, 0, Color::new_rgb(0., 1., 0.));
 
     let file = File::create(Path::new(r"tests/image_test/single_green_pixel.png")).unwrap();
-    frame.write_image(file, ImageType::Rgb8bit, None, None);
+    frame.write_image(file, ImageType::Rgb8bit, false);
 }
 
 #[test]
 fn generate_1_pixel_image_blue() {
-    let mut frame = Frame::new(1,1,3);
+    let mut frame = Frame::new(1, 1, 3);
     frame.write_color(0, 0, Color::new_rgb(0., 0., 1.));
 
     let file = File::create(Path::new(r"tests/image_test/single_blue_pixel.png")).unwrap();
-    frame.write_image(file, ImageType::Rgb8bit, None, None);
+    frame.write_image(file, ImageType::Rgb8bit, false);
 }
 
 #[test]
@@ -48,5 +48,5 @@ fn red_green_gradient() {
         }
     }
     let file = File::create(Path::new(r"tests/image_test/red_green_gradient.png")).unwrap();
-    frame.write_image(file, ImageType::Rgb8bit, None, None);
+    frame.write_image(file, ImageType::Rgb8bit, false);
 }
