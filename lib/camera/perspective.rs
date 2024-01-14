@@ -2,6 +2,8 @@ use crate::camera::Camera;
 use crate::common::Ray;
 use nalgebra::{Matrix4, Point3, Transform3, Unit, UnitVector3, Vector3};
 
+/// This struct defines a perspective camera, which mimics the way a human eye sees the environment.
+/// Far away objects appear small and near objects appear large.
 #[derive(Debug, PartialEq)]
 pub struct PerspectiveCamera {
     /// distance from image plane
@@ -53,6 +55,7 @@ impl PerspectiveCamera {
 
         let mut m = Matrix4::identity();
 
+        // transform matrix from camera space to world space
         m.set_column(0, &x_vec.to_homogeneous());
         m.set_column(1, &y_vec.to_homogeneous());
         m.set_column(2, &z_vec.to_homogeneous());
