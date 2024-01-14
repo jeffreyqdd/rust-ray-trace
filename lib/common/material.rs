@@ -1,5 +1,6 @@
 use crate::image::Color;
 
+// Specifies which illumination model to use when rendering the material.
 #[derive(Debug, PartialEq, Clone)]
 pub enum IllumModel {
     /// a constant color illumination model, using K_d for the material,
@@ -43,7 +44,8 @@ pub struct Material {
 }
 
 impl Material {
-    /// instantiates a material that is rendered as a black void
+    /// instantiates a material that renders as a black void according to the
+    /// MTL format
     pub fn none() -> Material {
         Material {
             k_a: Color::black_rgb(),
