@@ -31,7 +31,7 @@ fn main() {
         ns: 90.,
         ni: 0.,
         d: 1.,
-        illum: IllumModel::Constant,
+        illum: IllumModel::DiffuseAndLambertian,
     };
 
     // blue color
@@ -42,7 +42,7 @@ fn main() {
         ns: 20.,
         ni: 0.,
         d: 1.,
-        illum: IllumModel::Constant,
+        illum: IllumModel::DiffuseAndLambertian,
     };
 
     // gray color
@@ -50,10 +50,10 @@ fn main() {
         k_a: Color::new_rgb(0.2, 0.2, 0.2),
         k_d: Color::new_rgb(0.2, 0.2, 0.2),
         k_s: Color::new_rgb(0., 0., 0.),
-        ns: 20.,
+        ns: 0.,
         ni: 0.,
         d: 1.,
-        illum: IllumModel::Constant,
+        illum: IllumModel::DiffuseAndLambertian,
     };
 
     // create scene
@@ -82,7 +82,7 @@ fn main() {
     );
 
     // export image
-    let path = Path::new(r"output/lambertian_blinn_phong_cc.png");
+    let path = Path::new(r"output/lambertian_blinn_phong_cc_shadow.png");
     let file = File::create(path).unwrap();
     img.write_image(file, image::ImageType::Rgb16bit, true);
 }

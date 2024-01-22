@@ -4,7 +4,8 @@ pub mod geometry;
 pub mod illumination;
 pub mod image;
 
-pub const TRACE_EPSILON: f64 = 1e-14;
+pub const RAY_STEP_EPSILON: f64 = 1e-10;
+pub const EPSILON: f64 = 1e-14;
 
 use camera::Camera;
 use common::{IntersectResult, Ray, Scene};
@@ -22,7 +23,9 @@ fn shade(ray: Ray, lights: &Vec<Box<dyn Illuminate>>, scene: &Scene, depth: u32)
 
     // if depth limit has not been reached, we shoot the reflected light off into the scene
     // if we're able to, we want to reflect the ray and shoot it off into the scene again.
-    if depth > 0 {}
+    if depth > 0 {
+        // light reflections are intersting...to scatter, absorb, or reflect!
+    }
     // illuminate current pixel from current hit
     match hit_result {
         IntersectResult::Hit {
@@ -32,7 +35,7 @@ fn shade(ray: Ray, lights: &Vec<Box<dyn Illuminate>>, scene: &Scene, depth: u32)
             material,
         } => {
             for light in lights {
-                reflected_light += light.illuminate(&ray, &point, &normal, &material);
+                reflected_light += light.illuminate(&ray, &scene, &point, &normal, &material);
             }
             reflected_light.clamp();
             reflected_light
@@ -41,14 +44,6 @@ fn shade(ray: Ray, lights: &Vec<Box<dyn Illuminate>>, scene: &Scene, depth: u32)
     }
 }
 
-// pub fn shade(&self, ray: &Ray) -> (Color, IntersectResult) {
-//     let hit = self.intersect(ray);
-//     let mut result = Color::new_rgb(0., 0., 0.);
-//     for light in &self.lights {
-//         result += light.illuminate(ray, &hit);
-//     }
-//     (result, hit)
-// }
 pub fn render_frame(
     camera: Box<dyn Camera>,
     lights: Vec<Box<dyn Illuminate>>,

@@ -1,5 +1,6 @@
-use crate::common::{Material, Ray};
+use crate::common::{IllumModel, IntersectResult, Material, Ray, Scene};
 use crate::image::Color;
+use crate::RAY_STEP_EPSILON;
 use nalgebra::{distance_squared, Point3, UnitVector3};
 
 use super::traits::Illuminate;
@@ -22,22 +23,42 @@ impl Illuminate for PointLight {
     fn illuminate(
         &self,
         ray: &Ray,
+        scene: &Scene,
         point: &Point3<f64>,
         normal: &UnitVector3<f64>,
         material: &Material,
     ) -> Color {
-        // // calculate distance from point light source to intersection point
-        let light_to_hit_dist = distance_squared(&self.position, point);
         let hit_point_to_light = UnitVector3::new_normalize(self.position - point);
+
+        // if hit_point_to_light is blocked by an object, do not illuminate with light
+        // we want to movepoint by a bit to account for rounding errors
+        let light_ray = Ray::new(
+            point.to_owned() + hit_point_to_light.into_inner() * RAY_STEP_EPSILON,
+            hit_point_to_light.into_inner().to_owned(),
+        );
+        if matches!(scene.intersect(&light_ray), IntersectResult::Hit { .. }) {
+            return Color::black_rgb();
+        }
+
+        // Skip Diffuse and Specular Calculations IlumModel is CONSTANT
+        if let IllumModel::Constant = material.illum {
+            return material.k_d;
+        }
 
         // Diffuse shading using lambertian shading model: The reflection is calculated by
         // taking the dot product of the surface's normal N along with L, a normalized
         // vector pointing from the hit point to the light source. The number is then
         // multiplied by the color of the surface and the intensity of the light hitting
         // the surface.
-
-        let diffuse = (material.k_d * self.intensity) / light_to_hit_dist
+        let light_to_hit_dist = distance_squared(&self.position, point);
+        let mut diffuse = (material.k_d * self.intensity) / light_to_hit_dist
             * f64::max(hit_point_to_light.dot(normal), 0.);
+
+        // Skip Specular Calculation if IlumModel is Diffuse
+        if let IllumModel::Diffuse = material.illum {
+            diffuse.clamp();
+            return diffuse;
+        }
 
         // Use the Blinn-Phong reflection model
         // Calculate the halfway point between the viewer ray and the light source ray, H,

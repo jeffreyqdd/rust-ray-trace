@@ -1,4 +1,8 @@
+use nalgebra::{UnitVector3, Vector3};
+
 use crate::image::Color;
+
+use super::Ray;
 
 // Specifies which illumination model to use when rendering the material.
 #[derive(Debug, PartialEq, Clone)]
@@ -35,8 +39,8 @@ pub struct Material {
     /// object does not bend as it passes through the object
     pub ni: f64,
 
-    // dissolve factor in the range [0.0, 1.0] where 0 is completely transparent and 1 is
-    // completely opaque
+    /// dissolve factor in the range [0.0, 1.0] where 0 is completely transparent and 1 is
+    /// completely opaque
     pub d: f64,
 
     /// render method
@@ -55,6 +59,24 @@ impl Material {
             ni: 1.,
             d: 1.,
             illum: IllumModel::Constant,
+        }
+    }
+
+    pub fn scatter(&self, ray: Ray, normal: &UnitVector3<f64>) -> Option<Ray> {
+        match self.illum {
+            IllumModel::Constant => None,
+            IllumModel::Diffuse => {
+                let new_direction = normal.into_inner() + Vector3::new_random().normalize();
+
+                // if the largest element is lower than an EPSILON, this vector is close to the zero vector
+                // we set the reflection to the zero vector
+                if new_direction.abs().max() < 1e-8 {
+                    Some(Ray::new(ray.origin, normal.into_inner()))
+                } else {
+                    Some(Ray::new(ray.origin, new_direction.normalize()))
+                }
+            }
+            IllumModel::DiffuseAndLambertian => todo!(),
         }
     }
 }

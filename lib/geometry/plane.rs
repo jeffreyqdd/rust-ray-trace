@@ -1,6 +1,6 @@
-use crate::common::{IntersectResult, Ray, Material};
+use crate::common::{IntersectResult, Material, Ray};
 use crate::geometry::traits::Surface;
-use crate::TRACE_EPSILON;
+use crate::EPSILON;
 use approx::{abs_diff_eq, relative_eq, AbsDiffEq, RelativeEq};
 use nalgebra::{vector, Point3, Unit, UnitVector3, Vector3, Vector4};
 
@@ -8,11 +8,11 @@ use nalgebra::{vector, Point3, Unit, UnitVector3, Vector3, Vector4};
 pub struct Plane {
     normal: Unit<Vector3<f64>>,
     equation: Vector4<f64>,
-    material : Material
+    material: Material,
 }
 
 impl Plane {
-    pub fn new(point: Point3<f64>, normal: Unit<Vector3<f64>>, material : Material) -> Plane {
+    pub fn new(point: Point3<f64>, normal: Unit<Vector3<f64>>, material: Material) -> Plane {
         let equation: Vector4<f64> = Vector4::new(
             normal.x,
             normal.y,
@@ -20,7 +20,11 @@ impl Plane {
             -normal.dot(&vector![point.x, point.y, point.z]),
         );
 
-        Plane { normal, equation, material }
+        Plane {
+            normal,
+            equation,
+            material,
+        }
     }
 }
 
@@ -38,7 +42,7 @@ impl Surface for Plane {
                 t,
                 point: ray.at(t),
                 normal: UnitVector3::new_unchecked(-norm),
-                material: self.material.clone()
+                material: self.material.clone(),
             };
         }
         IntersectResult::Miss
@@ -49,7 +53,7 @@ impl AbsDiffEq for Plane {
     type Epsilon = f64;
 
     fn default_epsilon() -> Self::Epsilon {
-        TRACE_EPSILON
+        EPSILON
     }
 
     fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
